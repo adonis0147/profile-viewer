@@ -1,0 +1,43 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+#sidebar {
+	background-color: #CCF;
+	padding: 10px;
+	width: 200px;
+	flex: none;
+}
+
+#content {
+	background-color: #CFC;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+svg {
+	border: 1px solid #0E0;
+	flex-grow: 1;
+	width: 100%;
+	height: 100%;
+}
+
