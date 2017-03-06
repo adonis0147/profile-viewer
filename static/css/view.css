@@ -20,22 +20,20 @@ body {
 }
 
 #sidebar {
-	background-color: #CCF;
+	background-color: rgb(46, 50, 56);
 	padding: 10px;
-	width: 200px;
+	width: 280px;
 	flex: none;
 }
 
 #content {
-	background-color: #CFC;
-	padding: 10px;
+	background-color: rgb(238, 238, 238);
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
 }
 
 svg {
-	border: 1px solid #0E0;
 	flex-grow: 1;
 	width: 100%;
 	height: 100%;
@@ -43,8 +41,8 @@ svg {
 
 .node rect {
   fill: #fff;
-  stroke: steelblue;
-  stroke-width: 3px;
+  stroke: #fff;
+  stroke-width: 2px;
 }
 
 .node text {
@@ -53,7 +51,7 @@ svg {
 
 .link {
   fill: none;
-  stroke: #ccc;
-  stroke-width: 2px;
+  stroke: rgb(214, 214, 214);
+  stroke-width: 1px;
 }
 
