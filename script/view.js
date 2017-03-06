@@ -1,2 +1,0 @@
-ipcRenderer.send('getTreeData')
-

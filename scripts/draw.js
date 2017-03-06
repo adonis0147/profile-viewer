@@ -25,6 +25,8 @@ let NODE_SIZE = {
 }
 
 let DURATION = 750
+let VERTICAL_DISTANCE = 100
+let RATIO = 0.15
 let tree = d3.tree().nodeSize([NODE_SIZE.width + 20, NODE_SIZE.height])
 let root
 
@@ -43,7 +45,7 @@ function update(source) {
 
 	nodes.forEach((d) => {
 		d.x += SVG_SIZE.width / 2
-		d.y = d.depth * 100 + SVG_SIZE.height * 0.15
+		d.y = d.depth * VERTICAL_DISTANCE + SVG_SIZE.height * RATIO
 	})
 
 	updateNodes(source, nodes)
@@ -158,12 +160,9 @@ function diagonal(s, t) {
 ipcRenderer.on('getTreeData', (event, arg) => {
 	root = d3.hierarchy(arg, (d) => { return d.children })
 	root.x0 = SVG_SIZE.width / 2
-	root.y0 = SVG_SIZE.height * 0.1
+	root.y0 = SVG_SIZE.height * RATIO
 
-	root._children = root.children
-	root.children.forEach(collapse)
-	root.children = null
-
+	collapse(root)
 	update(root)
 })
 
