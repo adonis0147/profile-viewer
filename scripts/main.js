@@ -19,9 +19,15 @@ function setMenu() {
 		{
 			label: 'File',
 			submenu: [
-				{ label: 'Open' },
+				{
+					label: 'Open',
+					click() { }
+				},
 				{ type: 'separator' },
-				{ label: 'Preferences...' },
+				{
+					label: 'Preferences...',
+					click() { openPreferenceWindow() }
+				},
 			],
 		},
 		{
@@ -60,6 +66,7 @@ function setMenu() {
 				{ type: 'separator' },
 				{
 					label: 'Preferences...',
+					click() { openPreferenceWindow() }
 				},
 				{ type: 'separator' },
 				{
@@ -76,7 +83,10 @@ function setMenu() {
 		})
 		// File menu.
 		template[1].submenu = [
-				{ label: 'Open' },
+			{
+				label: 'Open',
+				click() { }
+			},
 		]
 		// Window menu.
 		template[3].submenu = [
@@ -105,6 +115,25 @@ function setMenu() {
 	const menu = Menu.buildFromTemplate(template)
 	Menu.setApplicationMenu(menu)
 }
+
+let preference_win
+
+function openPreferenceWindow() {
+	preference_win = new BrowserWindow({
+		height: 200,
+		parent: win,
+		modal: true,
+		show: false,
+	})
+	preference_win.loadURL(path.join('file://', __dirname, '..', 'pages', 'preference.html'))
+	preference_win.once('ready-to-show', () => {
+		preference_win.show()
+	})
+}
+
+ipcMain.on('closePreferenceWindow', (event, arg) => {
+	preference_win.close()
+})
 
 
 let tree_data = {
