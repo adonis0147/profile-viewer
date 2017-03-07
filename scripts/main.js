@@ -1,5 +1,6 @@
-const {app, BrowserWindow, ipcMain, Menu} = require('electron')
+const {app, BrowserWindow, ipcMain, Menu, dialog} = require('electron')
 const path = require('path')
+const fs = require('fs')
 
 let win
 
@@ -21,7 +22,8 @@ function setMenu() {
 			submenu: [
 				{
 					label: 'Open',
-					click() { }
+					accelerator: 'CmdOrCtrl+O',
+					click() { openFile() }
 				},
 				{ type: 'separator' },
 				{
@@ -85,7 +87,8 @@ function setMenu() {
 		template[1].submenu = [
 			{
 				label: 'Open',
-				click() { }
+				accelerator: 'CmdOrCtrl+O',
+				click() { openFile() }
 			},
 		]
 		// Window menu.
@@ -135,22 +138,25 @@ ipcMain.on('closePreferenceWindow', (event, arg) => {
 	preference_win.close()
 })
 
-
-let tree_data = {
-	"name": 'Top of level',
-	"children": [
+function openFile() {
+	dialog.showOpenDialog(
 		{
-			"name": "Level 2: A",
-			"children": [
-				{ "name": "Son of A" },
-				{ "name": "Daughter of A" }
+			filters: [
+				{ name: 'Profile Data', extensions: ['json'] },
 			]
 		},
-		{ "name": "Level 2: B" }
-	]
-};
-
-ipcMain.on('getTreeData', (event, arg) => {
-	event.sender.send('getTreeData', tree_data)
-})
+		(filenames) => {
+			if (filenames === undefined)
+				return
+			fs.readFile(filenames[0], 'utf-8', (err, data) => {
+				try {
+					let profile_data = JSON.parse(data)
+					win.webContents.send('loadProfileData', profile_data)
+				} catch(exception) {
+					dialog.showErrorBox('Read Profile Data Error', exception.message)
+				}
+			})
+		}
+	)
+}
 

@@ -157,7 +157,7 @@ function diagonal(s, t) {
 						${t.x} ${t.y}`
 }
 
-ipcRenderer.on('getTreeData', (event, arg) => {
+ipcRenderer.on('loadProfileData', (event, arg) => {
 	root = d3.hierarchy(arg, (d) => { return d.children })
 	root.x0 = SVG_SIZE.width / 2
 	root.y0 = SVG_SIZE.height * RATIO
