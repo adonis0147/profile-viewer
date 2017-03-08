@@ -2,8 +2,6 @@ const d3 = require('d3')
 const {ipcRenderer} = require('electron')
 
 let container = d3.select('#container')
-container.style('min-width', container.style('width'))
-container.style('min-height', container.style('height'))
 
 let SVG_SIZE = {
 	width: container.style('width').replace('px', ''),
@@ -11,7 +9,7 @@ let SVG_SIZE = {
 }
 
 let zoom = d3.zoom()
-let blackboard = d3.select('#container').call(zoom)
+let blackboard = container.call(zoom)
 	.append('g')
 		.attr('transform', 'translate(0, 0)')
 
