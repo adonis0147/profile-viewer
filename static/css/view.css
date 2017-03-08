@@ -21,9 +21,22 @@ body {
 
 #sidebar {
 	background-color: rgb(46, 50, 56);
-	padding: 10px;
 	width: 280px;
 	flex: none;
+}
+
+.line-item {
+	width: 280px;
+	height: 64px;
+	padding: 12px 18px 11px;
+	border-bottom: 1px solid #292c33;
+	color: #fff;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.line-item.active {
+	background-color: #3a3f45;
 }
 
 #content {

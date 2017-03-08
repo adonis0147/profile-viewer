@@ -29,7 +29,7 @@ let VERTICAL_DISTANCE = 100
 let RATIO = 0.15
 let tree = d3.tree().nodeSize([NODE_SIZE.width + 20, NODE_SIZE.height])
 let root
-let i = 0
+let i
 
 function collapse(d) {
 	if (d.children) {
@@ -158,7 +158,11 @@ function diagonal(s, t) {
 						${t.x} ${t.y}`
 }
 
-ipcRenderer.on('loadProfileData', (event, arg) => {
+ipcRenderer.on('viewData', (event, arg) => {
+	i = 0
+	blackboard.selectAll('g.node').remove()
+	blackboard.selectAll('path.link').remove()
+
 	root = d3.hierarchy(arg, (d) => { return d.children })
 	root.x0 = SVG_SIZE.width / 2
 	root.y0 = SVG_SIZE.height * RATIO

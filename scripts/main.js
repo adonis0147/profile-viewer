@@ -138,6 +138,15 @@ ipcMain.on('closePreferenceWindow', (event, arg) => {
 	preference_win.close()
 })
 
+let SORT_BY_KEYS = [
+	'total time',
+	'time per call',
+	'calls',
+]
+let profile_data
+let current_key
+let current_view_data
+
 function openFile() {
 	dialog.showOpenDialog(
 		{
@@ -150,13 +159,70 @@ function openFile() {
 				return
 			fs.readFile(filenames[0], 'utf-8', (err, data) => {
 				try {
-					let profile_data = JSON.parse(data)
-					win.webContents.send('loadProfileData', profile_data)
+					let raw_data = JSON.parse(data)
+					profile_data = parse(raw_data)
+					current_key = SORT_BY_KEYS[0]
+					list_data = getListDataByKey(profile_data, current_key)
+					list_data.sort((a, b) => { return a.percent < b.percent })
+					win.webContents.send('loadProfileData', { 'key': current_key, 'list_data': list_data })
 				} catch(exception) {
-					dialog.showErrorBox('Read Profile Data Error', exception.message)
+					dialog.showErrorBox('Load Profile Data Error', exception.message)
 				}
 			})
 		}
 	)
 }
+
+function parse(data) {
+	for (let name in data) {
+		calAverageTime(data[name])
+	}
+
+	let profile_data = {
+		'data': data,
+		'calls': 0,
+		'total time': 0,
+	}
+
+	for (let name in data) {
+		profile_data['calls'] += data[name]['calls']
+		profile_data['total time'] += data[name]['total time']
+	}
+	profile_data['time per call'] = profile_data['total time'] / profile_data['calls']
+	return profile_data
+}
+
+function calAverageTime(data) {
+	data['time per call'] = data['total time'] / data['calls']
+	if (data.children) {
+		data.children.forEach(calAverageTime)
+	}
+}
+
+function getListDataByKey(profile_data, key) {
+	list_data = []
+	for (let name in profile_data.data) {
+		list_data.push({
+			'name': name,
+			'percent': profile_data.data[name][key] / profile_data[key]
+		})
+	}
+	return list_data
+}
+
+ipcMain.on('viewData', (event, name) => {
+	current_view_data = profile_data.data[name]
+	event.sender.send('viewData', current_view_data)
+})
+
+ipcMain.on('loadCurrentData', (event, name) => {
+	if (profile_data === undefined)
+		return
+
+	event.sender.send('loadCurrentData', {
+		'key': current_key,
+		'list_data': getListDataByKey(profile_data, current_key),
+		'view_name': current_view_data && current_view_data.name
+	})
+})
 
