@@ -3,28 +3,13 @@
   margin: 0;
 }
 
-html {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  flex-shrink: 0;
-  height: 100%;
-  width: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  flex-shrink: 0;
-}
-
 #sidebar {
 	background-color: rgb(46, 50, 56);
 	width: 280px;
 	height: 100vh;
 	overflow-y: scroll;
-	flex: none;
+	display: inline-block;
+	float: left;
 }
 
 .line-item {
@@ -45,12 +30,9 @@ body {
 	background-color: rgb(238, 238, 238);
 	height: 100vh;
 	display: flex;
-	flex-direction: column;
-	flex-grow: 1;
 }
 
 svg {
-	flex-grow: 1;
 	width: 100%;
 	height: 100%;
 }
