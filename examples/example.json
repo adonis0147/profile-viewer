@@ -1,0 +1,32 @@
+{
+	"name": "Simple AI",
+	"children": [
+		{
+			"name": "Run until success",
+			"children": [
+				{
+					"name": "Run until fail",
+					"children": [
+						{ "name": "Aggregate entities" },
+						{ "name": "Filter nearest entity" },
+						{
+							"name": "Run until success",
+							"children": [
+								{ "name": "Cast skill" },
+								{ "name": "Chase target" }
+							]
+						}
+					]
+				},
+				{
+					"name": "Run until fail",
+					"children": [
+						{ "name": "Check random number" },
+						{ "name": "Walk around" }
+					]
+				}
+			]
+		}
+	]
+}
+

@@ -29,6 +29,7 @@ let VERTICAL_DISTANCE = 100
 let RATIO = 0.15
 let tree = d3.tree().nodeSize([NODE_SIZE.width + 20, NODE_SIZE.height])
 let root
+let i = 0
 
 function collapse(d) {
 	if (d.children) {
@@ -59,7 +60,7 @@ function update(source) {
 
 function updateNodes(source, nodes) {
 	let node = blackboard.selectAll('g.node')
-		.data(nodes)
+		.data(nodes, (d) => { return d.id || (d.id = ++i) })
 
 	let node_enter = node.enter().append('g')
 		.attr('class', 'node')
@@ -122,7 +123,7 @@ function click(d) {
 
 function updateLinks(source, links) {
 	let link = blackboard.selectAll('path.link')
-		.data(links)
+		.data(links, (d) => { return d.id })
 
 	let link_enter = link.enter().append('path')
 		.attr('class', 'link')
