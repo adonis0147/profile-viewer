@@ -3,11 +3,6 @@ const {ipcRenderer} = require('electron')
 
 let container = d3.select('#container')
 
-let SVG_SIZE = {
-	width: container.style('width').replace('px', ''),
-	height: container.style('height').replace('px', ''),
-}
-
 let zoom = d3.zoom()
 let blackboard = container.call(zoom)
 	.append('g')
@@ -26,6 +21,7 @@ let DURATION = 750
 let VERTICAL_DISTANCE = 100
 let RATIO = 0.15
 let tree = d3.tree().nodeSize([NODE_SIZE.width + 20, NODE_SIZE.height])
+let svg_size
 let root
 let i
 
@@ -43,8 +39,8 @@ function update(source) {
 	let links = meta_data.descendants().slice(1)
 
 	nodes.forEach((d) => {
-		d.x += SVG_SIZE.width / 2
-		d.y = d.depth * VERTICAL_DISTANCE + SVG_SIZE.height * RATIO
+		d.x += svg_size.width / 2
+		d.y = d.depth * VERTICAL_DISTANCE + svg_size.height * RATIO
 	})
 
 	updateNodes(source, nodes)
@@ -161,9 +157,14 @@ ipcRenderer.on('viewData', (event, arg) => {
 	blackboard.selectAll('g.node').remove()
 	blackboard.selectAll('path.link').remove()
 
+	svg_size = {
+		width: container.style('width').replace('px', ''),
+		height: container.style('height').replace('px', ''),
+	}
+
 	root = d3.hierarchy(arg, (d) => { return d.children })
-	root.x0 = SVG_SIZE.width / 2
-	root.y0 = SVG_SIZE.height * RATIO
+	root.x0 = svg_size.width / 2
+	root.y0 = svg_size.height * RATIO
 
 	collapse(root)
 	update(root)
