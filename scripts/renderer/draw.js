@@ -1,5 +1,7 @@
 const d3 = require('d3')
-const {ipcRenderer} = require('electron')
+const {remote} = require('electron')
+const {session} = remote.require('../main/viewer.js')
+const {logger} = remote.require('./logger.js')
 
 let container = d3.select('#container')
 
@@ -20,10 +22,36 @@ let NODE_SIZE = {
 let DURATION = 750
 let VERTICAL_DISTANCE = 100
 let RATIO = 0.15
+
+let id_manager = {
+	id: 0,
+	reset() { this.id = 0 },
+	generate() { return ++ this.id },
+}
+let offset = {
+	x() { return container.style('width').replace('px', '') / 2 },
+	y() { return container.style('height').replace('px', '') * RATIO }
+}
 let tree = d3.tree().nodeSize([NODE_SIZE.width + 20, NODE_SIZE.height])
-let svg_size
 let root
-let i
+let current_key
+
+function view(data, key) {
+	id_manager.reset()
+	blackboard.selectAll('g.node').remove()
+	blackboard.selectAll('path.link').remove()
+
+	root = d3.hierarchy(data, (d) => { return d.children })
+	root.x0 = offset.x()
+	root.y0 = offset.y()
+
+	current_key = key
+
+	logger.info(`View data - ${root.data.name} [${key}]`)
+
+	collapse(root)
+	update(root)
+}
 
 function collapse(d) {
 	if (d.children) {
@@ -39,8 +67,8 @@ function update(source) {
 	let links = meta_data.descendants().slice(1)
 
 	nodes.forEach((d) => {
-		d.x += svg_size.width / 2
-		d.y = d.depth * VERTICAL_DISTANCE + svg_size.height * RATIO
+		d.x += offset.x()
+		d.y = d.depth * VERTICAL_DISTANCE + offset.y()
 	})
 
 	updateNodes(source, nodes)
@@ -54,7 +82,7 @@ function update(source) {
 
 function updateNodes(source, nodes) {
 	let node = blackboard.selectAll('g.node')
-		.data(nodes, (d) => { return d.id || (d.id = ++i) })
+		.data(nodes, (d) => { return d.id || (d.id = id_manager.generate()) })
 
 	let node_enter = node.enter().append('g')
 		.attr('class', 'node')
@@ -151,22 +179,4 @@ function diagonal(s, t) {
 						${t.x} ${(s.y + t.y) / 2}
 						${t.x} ${t.y}`
 }
-
-ipcRenderer.on('viewData', (event, arg) => {
-	i = 0
-	blackboard.selectAll('g.node').remove()
-	blackboard.selectAll('path.link').remove()
-
-	svg_size = {
-		width: container.style('width').replace('px', ''),
-		height: container.style('height').replace('px', ''),
-	}
-
-	root = d3.hierarchy(arg, (d) => { return d.children })
-	root.x0 = svg_size.width / 2
-	root.y0 = svg_size.height * RATIO
-
-	collapse(root)
-	update(root)
-})
 

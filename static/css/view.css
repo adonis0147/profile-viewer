@@ -8,6 +8,7 @@
 	width: 280px;
 	height: 100vh;
 	overflow-y: scroll;
+	overflow-x: hidden;
 	display: inline-block;
 	float: left;
 }
