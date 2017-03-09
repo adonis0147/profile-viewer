@@ -14,7 +14,7 @@ const template = [
 			{ type: 'separator' },
 			{
 				label: 'Preferences...',
-				click() { preference.openWindow() }
+				click() { preference.openWindow(main_win) }
 			},
 		],
 	},
