@@ -47,7 +47,7 @@ function view(data, key) {
 
 	current_key = key
 
-	logger.info(`View data - ${root.data.name} [${key}]`)
+	logger.info(`On view data - ${root.data.name} [${key}]`)
 
 	collapse(root)
 	update(root)
@@ -73,6 +73,7 @@ function update(source) {
 
 	updateNodes(source, nodes)
 	updateLinks(source, links)
+	updateLabels(source, nodes)
 
 	nodes.forEach((d) => {
 		d.x0 = d.x
@@ -97,8 +98,8 @@ function updateNodes(source, nodes) {
 		.attr('height', 0)
 
 	node_enter.append('text')
-		.attr("dy", ".35em")
-		.attr("text-anchor", "middle")
+		.attr('dy', '.35em')
+		.attr('text-anchor', 'middle')
 		.text((d) => {
 			return d.data.name
 		})
@@ -178,5 +179,27 @@ function diagonal(s, t) {
 					C ${s.x} ${(s.y + t.y) / 2}
 						${t.x} ${(s.y + t.y) / 2}
 						${t.x} ${t.y}`
+}
+
+function updateLabels(source, nodes) {
+	let label = blackboard.selectAll('g.label')
+		.data(nodes, (d) => { return d.id })
+
+	let label_enter = label.enter().append('g')
+		.attr('class', 'label')
+		.attr('transform', (d) => { return `translate(${source.x0}, ${source.y0})` })
+
+	label_enter.append('text')
+		.attr('y', -(NODE_SIZE.height / 2 + 5))
+		.attr('text-anchor', 'middle')
+		.text((d) => { return `${current_key}: ${d.data[current_key]}` })
+
+	let label_update = label_enter.merge(label)
+
+	label_update.transition()
+		.duration(DURATION)
+		.attr('transform', (d) => { return `translate(${d.x}, ${d.y})` })
+
+	let label_exit = label.exit().remove()
 }
 

@@ -54,3 +54,7 @@ svg {
   stroke-width: 1px;
 }
 
+.label {
+	fill: blue;
+}
+
