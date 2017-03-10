@@ -226,3 +226,11 @@ function updateColor() {
 		})
 }
 
+function onUpdateKey(key) {
+	current_key = key
+	d3.selectAll('g.label text')
+		.text((d) => { return `${current_key}: ${d.data[current_key]}` })
+	if (blackboard)
+		updateColor()
+}
+

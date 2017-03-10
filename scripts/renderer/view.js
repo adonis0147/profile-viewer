@@ -8,7 +8,7 @@ if (session.current_data)
 function updateSidebar(list_data) {
 	let sidebar = d3.select('#sidebar')
 	let line_item = sidebar.selectAll('div.line-item')
-		.data(list_data)
+		.data(list_data, (d) => { return d.name })
 
 	line_item.enter().append('div')
 		.attr('class', 'line-item')
@@ -28,5 +28,12 @@ ipcRenderer.on('loadProfileData', (event, list_data) => {
 
 ipcRenderer.on('viewData', (event, key, data) => {
 	view(data, key)
+})
+
+ipcRenderer.on('changeKey', (event, list_data, key) => {
+	let names = list_data.map((d) => { return d.name })
+	logger.info(`On change key: ${key} - [${names.join(', ')}]`)
+	updateSidebar(list_data)
+	onUpdateKey(key)
 })
 

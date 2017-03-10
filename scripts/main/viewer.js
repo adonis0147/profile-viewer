@@ -13,6 +13,7 @@ const SORT_BY_KEYS = [
 	'time per call',
 	'calls',
 ]
+exports.SORT_BY_KEYS = SORT_BY_KEYS
 
 let profile_data
 exports.session = session = {
@@ -91,5 +92,18 @@ ipcMain.on('viewData', (event, name) => {
 	logger.info(`View data - ${name}`)
 	data = profile_data.data[name]
 	event.sender.send('viewData', session.current_key, data)
+})
+
+ipcMain.on('changeKey', (event, index) => {
+	session.current_key = SORT_BY_KEYS[index]
+	logger.info(`Change key: ${session.current_key}`)
+	if (!profile_data) {
+		logger.info('Profile data not loaded')
+		return
+	}
+
+	session.list_data = getListDataByKey(profile_data, session.current_key)
+	session.list_data.sort((a, b) => { return a.percent < b.percent })
+	event.sender.send('changeKey', session.list_data, session.current_key)
 })
 
