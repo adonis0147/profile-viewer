@@ -87,6 +87,7 @@ function update(source) {
 	updateNodes(source, nodes)
 	updateLinks(source, links)
 	updateLabels(source, nodes)
+	updateColor()
 
 	nodes.forEach((d) => {
 		d.x0 = d.x
@@ -214,5 +215,14 @@ function updateLabels(source, nodes) {
 		.attr('transform', (d) => { return `translate(${d.x}, ${d.y})` })
 
 	let label_exit = label.exit().remove()
+}
+
+function updateColor() {
+	blackboard.selectAll('g.node rect')
+		.style('fill', (d) => {
+			let percent = d.data[current_key] / root.data[current_key]
+			let h = Math.floor((1 - percent) * 60 + 1e-6)
+			return hsv2rgb(h, 1, 1)
+		})
 }
 

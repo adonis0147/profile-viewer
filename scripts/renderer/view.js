@@ -21,7 +21,7 @@ function updateSidebar(list_data) {
 }
 
 ipcRenderer.on('loadProfileData', (event, list_data) => {
-	let names = list_data.map((e) => { return e.name })
+	let names = list_data.map((d) => { return d.name })
 	logger.info(`Got list data - [${names.join(', ')}]`)
 	updateSidebar(list_data)
 })
