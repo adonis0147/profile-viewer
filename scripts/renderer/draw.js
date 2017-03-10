@@ -3,17 +3,6 @@ const {remote} = require('electron')
 const {session} = remote.require('../main/viewer.js')
 const {logger} = remote.require('./logger.js')
 
-let container = d3.select('#container')
-
-let zoom = d3.zoom()
-let blackboard = container.call(zoom)
-	.append('g')
-		.attr('transform', 'translate(0, 0)')
-
-zoom.on('zoom', () => {
-	blackboard.attr('transform', d3.event.transform)
-})
-
 let NODE_SIZE = {
 	width : 150,
 	height : 50,
@@ -23,27 +12,34 @@ let DURATION = 750
 let VERTICAL_DISTANCE = 100
 let RATIO = 0.15
 
+let container
+let blackboard
+
+let offset = {
+	x: 0,
+	y: 0,
+	calculate() {
+		this.x = container.style('width').replace('px', '') / 2
+		this.y = container.style('height').replace('px', '') * RATIO
+	}
+}
+
 let id_manager = {
 	id: 0,
 	reset() { this.id = 0 },
 	generate() { return ++ this.id },
 }
-let offset = {
-	x() { return container.style('width').replace('px', '') / 2 },
-	y() { return container.style('height').replace('px', '') * RATIO }
-}
+
 let tree = d3.tree().nodeSize([NODE_SIZE.width + 20, NODE_SIZE.height])
 let root
 let current_key
 
 function view(data, key) {
-	id_manager.reset()
-	blackboard.selectAll('g.node').remove()
-	blackboard.selectAll('path.link').remove()
+	refresh()
 
 	root = d3.hierarchy(data, (d) => { return d.children })
-	root.x0 = offset.x()
-	root.y0 = offset.y()
+	root.x0 = offset.x
+	root.y0 = offset.y
 
 	current_key = key
 
@@ -51,6 +47,23 @@ function view(data, key) {
 
 	collapse(root)
 	update(root)
+}
+
+function refresh() {
+	d3.select('#container').remove()
+	container = d3.select('#content').append('svg')
+		.attr('id', 'container')
+	blackboard = container.call(d3.zoom().on('zoom', () => {
+			blackboard.attr('transform', d3.event.transform)
+		}))
+		.append('g')
+			.attr('transform', 'translate(0, 0)')
+
+	offset.calculate()
+	id_manager.reset()
+	blackboard.selectAll('g.node').remove()
+	blackboard.selectAll('path.link').remove()
+	blackboard.selectAll('g.label').remove()
 }
 
 function collapse(d) {
@@ -67,8 +80,8 @@ function update(source) {
 	let links = meta_data.descendants().slice(1)
 
 	nodes.forEach((d) => {
-		d.x += offset.x()
-		d.y = d.depth * VERTICAL_DISTANCE + offset.y()
+		d.x += offset.x
+		d.y = d.depth * VERTICAL_DISTANCE + offset.y
 	})
 
 	updateNodes(source, nodes)
