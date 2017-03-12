@@ -24,6 +24,13 @@ function updateSidebar(list_data) {
 
 	item.append('p')
 		.text((d) => { return d.name })
+
+	sidebar.selectAll('div.line-item')
+		.each(function(d) {
+			if (session.current_data == d.name) {
+				d3.select(this).classed('active', true)
+			}
+		})
 }
 
 ipcRenderer.on('loadProfileData', (event, list_data) => {
