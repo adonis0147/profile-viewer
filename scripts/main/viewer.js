@@ -90,9 +90,13 @@ function getListDataByKey(profile_data, key) {
 
 function compare(a, b) {
 	if (Math.abs(a.percent - b.percent) > 1e-4)
-		return a.percent < b.percent
+		return b.percent - a.percent
+	else if (a.name < b.name)
+		return -1
+	else if (a.name > b.name)
+		return 1
 	else
-		return a.name > b.name
+		return 0
 }
 
 ipcMain.on('viewData', (event, name) => {
