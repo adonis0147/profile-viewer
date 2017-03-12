@@ -10,14 +10,20 @@ function updateSidebar(list_data) {
 	let line_item = sidebar.selectAll('div.line-item')
 		.data(list_data, (d) => { return d.name })
 
-	line_item.enter().append('div')
+	let item = line_item.enter().append('div')
 		.attr('class', 'line-item')
-		.text((d) => { return d.name })
 		.on('click', function(d) {
 			d3.selectAll('#sidebar div.line-item').classed('active', false)
 			d3.select(this).classed('active', true)
 			ipcRenderer.send('viewData', d.name)
 		})
+
+	item.append('div')
+		.attr('class', 'percent')
+		.text((d) => { return `${(d.percent * 100).toFixed(2)}%` })
+
+	item.append('p')
+		.text((d) => { return d.name })
 }
 
 ipcRenderer.on('loadProfileData', (event, list_data) => {
