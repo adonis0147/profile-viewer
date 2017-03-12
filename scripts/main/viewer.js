@@ -40,7 +40,7 @@ exports.openFile = function() {
 					let raw_data = JSON.parse(data)
 					profile_data = parse(raw_data)
 					session.list_data = getListDataByKey(profile_data, session.current_key)
-					session.list_data.sort((a, b) => { return a.percent < b.percent })
+					session.list_data.sort(compare)
 					main_win.webContents.send('loadProfileData', session.list_data)
 				} catch(exception) {
 					dialog.showErrorBox('Load Profile Data Error', exception.message)
@@ -59,13 +59,14 @@ function parse(data) {
 		'data': data,
 		'calls': 0,
 		'total time': 0,
+		'time per call': 0,
 	}
 
 	for (let name in data) {
 		profile_data['calls'] += data[name]['calls']
 		profile_data['total time'] += data[name]['total time']
+		profile_data['time per call'] += data[name]['time per call']
 	}
-	profile_data['time per call'] = profile_data['total time'] / profile_data['calls']
 	return profile_data
 }
 
@@ -87,6 +88,13 @@ function getListDataByKey(profile_data, key) {
 	return list_data
 }
 
+function compare(a, b) {
+	if (Math.abs(a.percent - b.percent) > 1e-4)
+		return a.percent < b.percent
+	else
+		return a.name > b.name
+}
+
 ipcMain.on('viewData', (event, name) => {
 	session.current_data = name
 	logger.info(`View data - ${name}`)
@@ -103,7 +111,7 @@ ipcMain.on('changeKey', (event, index) => {
 	}
 
 	session.list_data = getListDataByKey(profile_data, session.current_key)
-	session.list_data.sort((a, b) => { return a.percent < b.percent })
+	session.list_data.sort(compare)
 	event.sender.send('changeKey', session.list_data, session.current_key)
 })
 

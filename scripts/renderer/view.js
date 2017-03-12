@@ -7,10 +7,17 @@ if (session.current_data)
 
 function updateSidebar(list_data) {
 	let sidebar = d3.select('#sidebar')
+
+	let active = sidebar.select('div.line-item.active p')
+	if (active.size()) current_data = active.text()
+	else current_data = session.current_data
+
+	sidebar.selectAll('div.line-item').remove()
+
 	let line_item = sidebar.selectAll('div.line-item')
 		.data(list_data, (d) => { return d.name })
 
-	let item = line_item.enter().append('div')
+	let line_item_enter = line_item.enter().append('div')
 		.attr('class', 'line-item')
 		.on('click', function(d) {
 			d3.selectAll('#sidebar div.line-item').classed('active', false)
@@ -18,16 +25,16 @@ function updateSidebar(list_data) {
 			ipcRenderer.send('viewData', d.name)
 		})
 
-	item.append('div')
+	line_item_enter.append('div')
 		.attr('class', 'percent')
 		.text((d) => { return `${(d.percent * 100).toFixed(2)}%` })
 
-	item.append('p')
+	line_item_enter.append('p')
 		.text((d) => { return d.name })
 
 	sidebar.selectAll('div.line-item')
 		.each(function(d) {
-			if (session.current_data == d.name) {
+			if (current_data == d.name) {
 				d3.select(this).classed('active', true)
 			}
 		})
