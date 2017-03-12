@@ -38,6 +38,15 @@ function updateSidebar(list_data) {
 				d3.select(this).classed('active', true)
 			}
 		})
+
+	autoScroll()
+}
+
+function autoScroll() {
+	let active_line_item = d3.select('div.line-item.active').node()
+	if (!active_line_item) return
+
+	d3.select('#sidebar').node().scrollTop = active_line_item.offsetTop
 }
 
 ipcRenderer.on('loadProfileData', (event, list_data) => {
