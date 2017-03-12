@@ -1,4 +1,4 @@
-const {Menu, MenuItem} = require('electron')
+const {app, Menu, MenuItem} = require('electron')
 const viewer = require('./viewer.js')
 const preference = require('./preference.js')
 
