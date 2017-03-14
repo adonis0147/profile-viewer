@@ -74,6 +74,15 @@ function collapse(d) {
 	}
 }
 
+function expand(d) {
+	if (d._children) {
+		d.children = d._children
+		d._children = null
+	}
+	if (d.children)
+		d.children.forEach(expand)
+}
+
 function update(source) {
 	let meta_data = tree(root)
 	let nodes = meta_data.descendants()
