@@ -127,6 +127,7 @@ function updateNodes(source, nodes) {
 			.append('p')
 				.style('width', `${NODE_SIZE.width}px`)
 				.style('height', `${NODE_SIZE.height}px`)
+				.style('color', 'rgba(0, 0, 0, 1)')
 				.text((d) => { return d.data.name })
 
 	let node_update = node_enter.merge(node)
@@ -154,8 +155,8 @@ function updateNodes(source, nodes) {
 		.attr('width', 0)
 		.attr('height', 0)
 
-	node_exit.select('text')
-		.style('fill-opacity', 0)
+	node_exit.select('foreignObject p')
+		.style('color', 'rgba(0, 0, 0, 0)')
 }
 
 function click(d) {
