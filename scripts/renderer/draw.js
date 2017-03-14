@@ -120,12 +120,14 @@ function updateNodes(source, nodes) {
 		.attr('width', 0)
 		.attr('height', 0)
 
-	node_enter.append('text')
-		.attr('dy', '.35em')
-		.attr('text-anchor', 'middle')
-		.text((d) => {
-			return d.data.name
-		})
+	node_enter.append('foreignObject')
+		.attr('x', -NODE_SIZE.width / 2)
+		.attr('y', -NODE_SIZE.height / 2)
+		.append('xhtml:body')
+			.append('p')
+				.style('width', `${NODE_SIZE.width}px`)
+				.style('height', `${NODE_SIZE.height}px`)
+				.text((d) => { return d.data.name })
 
 	let node_update = node_enter.merge(node)
 

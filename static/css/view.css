@@ -70,6 +70,15 @@ svg {
 	font: 12px sans-serif;
 }
 
+.node foreignObject p {
+	margin: 0;
+	padding: 2px;
+	font: 12px sans-serif;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .link {
   fill: none;
   stroke: rgb(214, 214, 214);
