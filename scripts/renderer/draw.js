@@ -111,7 +111,6 @@ function updateNodes(source, nodes) {
 	let node_enter = node.enter().append('g')
 		.attr('class', 'node')
 		.attr('transform', (d) => { return `translate(${source.x0}, ${source.y0})` })
-		.on('click', click)
 
 	node_enter.append('rect')
 		.attr('class', 'node')
@@ -129,6 +128,7 @@ function updateNodes(source, nodes) {
 				.style('height', `${NODE_SIZE.height}px`)
 				.style('color', 'rgba(0, 0, 0, 1)')
 				.text((d) => { return d.data.name })
+				.on('click', click)
 
 	let node_update = node_enter.merge(node)
 
@@ -140,7 +140,6 @@ function updateNodes(source, nodes) {
 		.attr('width', NODE_SIZE.width)
 		.attr('height', NODE_SIZE.height)
 		.style('stroke', (d) => { return d._children ? 'rgb(136, 136, 136)' : '#fff' })
-		.attr('cursor', 'pointer')
 
 	let node_exit = node.exit().transition()
 		.duration(DURATION)
