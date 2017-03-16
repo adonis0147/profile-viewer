@@ -17,6 +17,7 @@ function createWindow() {
 	})
 	win.loadURL(path.join('file://', __dirname, '..', '..', 'pages', 'index.html'))
 	menu.init(win, config_file)
+	viewer.init(win, config_file)
 	configure()
 }
 
@@ -32,7 +33,5 @@ function configure() {
 	let config = JSON.parse(fs.readFileSync(config_file))
 	if (!config['proto path'])
 		preference.openWindow(win, config_file)
-	else
-		viewer.init(win, config_file)
 }
 
