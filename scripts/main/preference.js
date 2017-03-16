@@ -9,7 +9,7 @@ let config_file
 exports.openWindow = function(main_win, file) {
 	win = new BrowserWindow({
 		width: 480,
-		height: 150,
+		height: 130,
 		parent: main_win,
 		modal: true,
 		show: false,

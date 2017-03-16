@@ -217,7 +217,7 @@ function updateLabels(source, nodes) {
 	label_enter.append('text')
 		.attr('y', -(NODE_SIZE.height / 2 + 5))
 		.attr('text-anchor', 'middle')
-		.text((d) => { return `${current_key}: ${d.data[current_key]}` })
+		.text((d) => { return `${current_key}: ${d.data[current_key].toFixed(2)}` })
 
 	let label_update = label_enter.merge(label)
 
