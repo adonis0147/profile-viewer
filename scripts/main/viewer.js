@@ -71,7 +71,7 @@ function parse(data) {
 }
 
 function calAverageTime(data) {
-	data['time per call'] = data['total time'] / data['calls']
+	data['time per call'] = data['total time'] / (data['calls'] + 1e-6)
 	if (data.children) {
 		data.children.forEach(calAverageTime)
 	}

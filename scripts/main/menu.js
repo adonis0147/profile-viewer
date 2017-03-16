@@ -1,6 +1,5 @@
 const {app, Menu, MenuItem} = require('electron')
 const viewer = require('./viewer.js')
-const preference = require('./preference.js')
 
 const template = [
 	{
@@ -10,11 +9,6 @@ const template = [
 				label: 'Open',
 				accelerator: 'CmdOrCtrl+O',
 				click() { viewer.openFile() }
-			},
-			{ type: 'separator' },
-			{
-				label: 'Preferences...',
-				click() { preference.openWindow(main_win) }
 			},
 		],
 	},
@@ -51,11 +45,6 @@ if (process.platform === 'darwin') {
 		label: app.getName(),
 		submenu: [
 			{ role: 'about' },
-			{ type: 'separator' },
-			{
-				label: 'Preferences...',
-				click() { openPreferenceWindow() }
-			},
 			{ type: 'separator' },
 			{
 				role: 'services',
