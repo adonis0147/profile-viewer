@@ -4,15 +4,77 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<title>Preference</title>
+		<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				width: 100vw;
+				height: 100vh;
+			}
+			#container {
+				width: 100%;
+				height: 100%;
+				display: flex;
+			}
+			#container #form {
+				width: 400px;
+				margin: 20px auto;
+			}
+			button {
+				padding: 0 5px;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>Preference</h1>
-		<button onclick='closePreferenceWindow()'>close</button>
+		<div id="container">
+			<div id="form">
+				<div class="form-group">
+					<label for="proto-path" style="margin-right: 10px">Proto Path:</label>
+					<input id="proto-path" type="input" style="width: 250px;" readonly>
+					<button id="select-path" style="float: right;">select</button>
+				</div>
+				<button id="confirm" style="float: right;">confirm</button>
+			</div>
+		</div>
+
 		<script type="text/javascript">
-			function closePreferenceWindow() {
-				const {ipcRenderer} = require('electron')
-				ipcRenderer.send('closePreferenceWindow')
-			}
+			const d3 = require('d3')
+			const {ipcRenderer, remote} = require('electron')
+			const {dialog} = remote
+
+			let path_input = d3.select('#proto-path')
+
+			ipcRenderer.send('loadConfig')
+
+			ipcRenderer.on('loadConfig', (event, config) => {
+				path_input.attr('value', config['proto path'])
+			})
+
+			d3.select('#select-path').on('click', function() {
+				dialog.showOpenDialog(
+					{
+						filters: [
+							{ name: 'Profile Data', extensions: ['json'] },
+						],
+						properties: ['openDirectory'],
+					},
+					(filepaths) => {
+						let path = filepaths[0]
+						path_input.attr('value', path)
+					}
+				)
+			})
+
+			d3.select('#confirm').on('click', function() {
+				let proto_path = path_input.attr('value')
+				if (proto_path)
+					ipcRenderer.send('changeProtoPath', proto_path)
+				else
+					dialog.showErrorBox('The proto path is None', 'Please select proto path first!')
+			})
 		</script>
 	</body>
 </html>

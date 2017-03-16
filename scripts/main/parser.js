@@ -55,19 +55,18 @@ let aitree = P.lazy(() => {
 })
 
 exports.parse = function(proto) {
-	fs.readFile(proto, 'utf-8', (err, data) => {
-		let result = aitree.parse(data)
-		if (!result.status) {
-			console.log(logger.error(`Failed to parse proto file [${proto}]!`))
+	data = fs.readFileSync(proto, 'utf-8')
+	let result = aitree.parse(data)
+	if (!result.status) {
+		console.log(logger.error(`Failed to parse proto file [${proto}]!`))
+		return {}
+	}
+	let nodes_info = {}
+	result.value.forEach((value) => {
+		if (value.type !== 'object' || value.name !== 'ai_node')
 			return
-		}
-		nodes_info = {}
-		result.value.forEach((value) => {
-			if (value.type !== 'object' || value.name !== 'ai_node')
-				return
-			nodes_info[value.value.id] = value.value
-		})
-		return nodes_info
+		nodes_info[value.value.id] = value.value
 	})
+	return nodes_info
 }
 

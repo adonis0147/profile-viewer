@@ -233,14 +233,17 @@ function updateColor() {
 		.style('fill', (d) => {
 			let percent = d.data[current_key] / root.data[current_key]
 			let h = Math.floor((1 - percent) * 60 + 1e-6)
-			return hsv2rgb(h, 1, 1)
+			if (percent < 1e-4)
+				return 'white'
+			else
+				return hsv2rgb(h, 1, 1)
 		})
 }
 
 function onUpdateKey(key) {
 	current_key = key
 	d3.selectAll('g.label text')
-		.text((d) => { return `${current_key}: ${d.data[current_key]}` })
+		.text((d) => { return `${current_key}: ${d.data[current_key].toFixed(2)}` })
 	if (blackboard)
 		updateColor()
 }

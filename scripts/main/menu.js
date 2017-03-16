@@ -14,7 +14,9 @@ const template = [
 			{ type: 'separator' },
 			{
 				label: 'Preferences...',
-				click() { preference.openWindow(main_win) }
+				click() {
+					preference.openWindow(main_win, config_file)
+				}
 			},
 		],
 	},
@@ -54,7 +56,9 @@ if (process.platform === 'darwin') {
 			{ type: 'separator' },
 			{
 				label: 'Preferences...',
-				click() { openPreferenceWindow() }
+				click() {
+					preference.openWindow(main_win, config_file)
+				}
 			},
 			{ type: 'separator' },
 			{
@@ -102,10 +106,11 @@ if (process.platform === 'darwin') {
 }
 
 let main_win
+let config_file
 
-exports.init = (win) => {
+exports.init = (win, file) => {
 	main_win = win
-	viewer.init(win)
+	config_file = file
 
 	const menu = Menu.buildFromTemplate(template)
 	Menu.setApplicationMenu(menu)

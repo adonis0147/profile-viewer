@@ -1,11 +1,15 @@
 const {dialog, ipcMain} = require('electron')
+const path = require('path')
 const fs = require('fs')
 const {logger} = require('./logger.js')
+const parser = require('./parser.js')
 
 let main_win
+let config_file
 
-exports.init = function(win) {
+exports.init = function(win, file) {
 	main_win = win
+	config_file = file
 }
 
 const SORT_BY_KEYS = [
@@ -38,11 +42,23 @@ exports.openFile = function() {
 			fs.readFile(filename, 'utf-8', (err, data) => {
 				try {
 					let raw_data = JSON.parse(data)
-					profile_data = parse(raw_data)
+					profile_data = {}
+					for (let tree_id in raw_data) {
+						try {
+							nodes_info = getNodesInfo(tree_id)
+							tree_data = generate(tree_id, nodes_info, raw_data[tree_id])
+						}
+						catch (exception) {
+							dialog.showErrorBox('Generate data Error', exception.message)
+							return
+						}
+						profile_data[tree_id] = tree_data
+					}
+					profile_data = analyse(profile_data)
 					session.list_data = getListDataByKey(profile_data, session.current_key)
 					session.list_data.sort(compare)
 					main_win.webContents.send('loadProfileData', session.list_data)
-				} catch(exception) {
+				} catch (exception) {
 					dialog.showErrorBox('Load Profile Data Error', exception.message)
 				}
 			})
@@ -50,7 +66,42 @@ exports.openFile = function() {
 	)
 }
 
-function parse(data) {
+function getNodesInfo(tree_id) {
+	config = JSON.parse(fs.readFileSync(config_file, 'utf-8'))
+	proto = path.join(config['proto path'], `${tree_id}.txt`)
+	return parser.parse(proto)
+}
+
+function generate(node_id, nodes_info, profile_data) {
+	let node_data = {}
+	let node = nodes_info[`${node_id}`]
+	node_data.name = node.name
+
+	if (profile_data[node_id] === undefined) {
+		node_data['total time'] = 0
+		node_data['calls'] = 0
+	}
+	else {
+		node_data['total time'] = profile_data[node_id].clocks / 1000
+		node_data['calls'] = profile_data[node_id].calls
+	}
+
+	if (!node.children) {
+		if (node.type === 'SUB_TREE') {
+			Object.assign(nodes_info, getNodesInfo(node.params.subtree_id))
+			return generate(node.params.subtree_id, nodes_info, profile_data)
+		}
+		else
+			return node_data
+	}
+	node_data.children = []
+	node.children.forEach((child) => {
+		node_data.children.push(generate(child, nodes_info, profile_data))
+	})
+	return node_data
+}
+
+function analyse(data) {
 	for (let name in data) {
 		calAverageTime(data[name])
 	}
@@ -71,7 +122,7 @@ function parse(data) {
 }
 
 function calAverageTime(data) {
-	data['time per call'] = data['total time'] / data['calls']
+	data['time per call'] = data['total time'] / (data['calls'] + 1e-6)
 	if (data.children) {
 		data.children.forEach(calAverageTime)
 	}
