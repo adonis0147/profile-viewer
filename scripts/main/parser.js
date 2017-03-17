@@ -13,7 +13,7 @@ let identifier = token(P.regexp(/[a-zA-Z_][0-9a-zA-Z_+-]*/))
 
 let colon = token(P.string(':'))
 
-let number_literal = token(P.regexp(/-?([1-9][0-9]*)/)).map(Number)
+let number_literal = token(P.regexp(/-?(0|[1-9][0-9]*)/)).map(Number)
 let string_literal = token(P.regexp(/".*"/)).map((s) => { return s.substr(1, s.length - 2) })
 let type_literal = token(P.regexp(/[A-Z]([A-Z]|_)*/))
 
