@@ -10,6 +10,10 @@ let config_file = path.join(__dirname, '..', '..', 'config.json')
 
 app.on('ready', createWindow)
 
+app.on('window-all-closed', () => {
+	app.quit()
+})
+
 function createWindow() {
 	win = new BrowserWindow({
 		width: 1000,
