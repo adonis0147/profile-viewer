@@ -65,9 +65,6 @@
 			d3.select('#select-path').on('click', function() {
 				dialog.showOpenDialog(
 					{
-						filters: [
-							{ name: 'Profile Data', extensions: ['json'] },
-						],
 						properties: ['openDirectory'],
 					},
 					(filepaths) => {
