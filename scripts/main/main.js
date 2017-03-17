@@ -1,12 +1,13 @@
 const {app, BrowserWindow} = require('electron')
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 const menu = require('./menu.js')
 const preference = require('./preference.js')
 const viewer = require('./viewer.js')
 
 let win
-let config_file = path.join(__dirname, '..', '..', 'config.json')
+let config_file = path.join(os.homedir(), '.viewer_config.json')
 
 app.on('ready', createWindow)
 
