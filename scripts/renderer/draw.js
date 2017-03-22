@@ -249,8 +249,9 @@ function onUpdateKey(key) {
 }
 
 function displayNumber(number) {
-	// Integer
-	if (number % 1 === 0)
+	let is_integer = (number % 1 === 0)
+
+	if (is_integer)
 		return number
 	else if (number > 0.001)
 		return number.toFixed(3)
