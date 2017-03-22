@@ -217,7 +217,7 @@ function updateLabels(source, nodes) {
 	label_enter.append('text')
 		.attr('y', -(NODE_SIZE.height / 2 + 5))
 		.attr('text-anchor', 'middle')
-		.text((d) => { return `${current_key}: ${d.data[current_key].toFixed(2)}` })
+		.text((d) => { return `${current_key}: ${displayNumber(d.data[current_key])}` })
 
 	let label_update = label_enter.merge(label)
 
@@ -243,8 +243,18 @@ function updateColor() {
 function onUpdateKey(key) {
 	current_key = key
 	d3.selectAll('g.label text')
-		.text((d) => { return `${current_key}: ${d.data[current_key].toFixed(2)}` })
+		.text((d) => { return `${current_key}: ${displayNumber(d.data[current_key])}` })
 	if (blackboard)
 		updateColor()
+}
+
+function displayNumber(number) {
+	// Integer
+	if (number % 1 === 0)
+		return number
+	else if (number > 0.001)
+		return number.toFixed(3)
+	else
+		return number.toExponential(2)
 }
 
