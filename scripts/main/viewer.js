@@ -13,6 +13,7 @@ exports.init = function(win, file) {
 }
 
 const SORT_BY_KEYS = [
+	'average time',
 	'total time',
 	'time per call',
 	'calls',
@@ -103,7 +104,8 @@ function generate(node_id, nodes_info, profile_data) {
 
 function analyse(data) {
 	for (let name in data) {
-		calAverageTime(data[name])
+		calTimePerCall(data[name])
+		calAverageTime(data[name], data[name]['calls'])
 	}
 
 	let profile_data = {
@@ -111,20 +113,29 @@ function analyse(data) {
 		'calls': 0,
 		'total time': 0,
 		'time per call': 0,
+		'average time': 0,
 	}
 
 	for (let name in data) {
 		profile_data['calls'] += data[name]['calls']
 		profile_data['total time'] += data[name]['total time']
 		profile_data['time per call'] += data[name]['time per call']
+		profile_data['average time'] += data[name]['average time']
 	}
 	return profile_data
 }
 
-function calAverageTime(data) {
+function calTimePerCall(data) {
 	data['time per call'] = data['total time'] / (data['calls'] + 1e-6)
 	if (data.children) {
-		data.children.forEach(calAverageTime)
+		data.children.forEach(calTimePerCall)
+	}
+}
+
+function calAverageTime(data, calls) {
+	data['average time'] = data['total time'] / (calls + 1e-6)
+	if (data.children) {
+		data.children.forEach((child) => { calAverageTime(child, calls) })
 	}
 }
 
