@@ -10,7 +10,7 @@ A cross platform desktop application to view profile data of behavior tree which
   ```
   git clone https://github.com/adonis0147/profile-viewer
   cd profile-viewer
-  npm install`
+  npm install
   electron .
   ```
   
